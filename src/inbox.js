@@ -1,8 +1,8 @@
 import { sparqlQuery } from './comunica.js';
 
-export async function getNotification(url) {
+export async function getNotification(notificationUrl) {
     // For now assume the notification is plain JSON
-    const response = await fetch(url);
+    const response = await fetch(notificationUrl);
     const data = await response.json();
     return data;
 }

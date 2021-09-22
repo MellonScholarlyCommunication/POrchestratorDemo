@@ -51,8 +51,6 @@
     }
 
     function nameLookup(iri) {
-        console.log(iri);
-        
         if (!iri) {
             return "someone";
         }

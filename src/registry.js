@@ -25,14 +25,14 @@ async function listCards(registryUrl) {
     });
 }
 
-async function fetchJson() {
+async function getRegistry() {
 	const response  = await fetch('registry.json');
 	const data      = await response.json();
 	return data;
 }
 
 export const cardList = readable([], function start(set) {
-	fetchJson().then( data => {
+	getRegistry().then( data => {
 		cardReader(data.registry).then( cards => {
 			// The cardList is a sorted list of card.ttl found at the source
 			set(cards.sort( (a,b) => a.name.localeCompare(b.name)));

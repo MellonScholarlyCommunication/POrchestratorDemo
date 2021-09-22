@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import cytoscape from 'cytoscape';
 
     const cyStyle = [ 
