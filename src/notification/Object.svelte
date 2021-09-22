@@ -13,7 +13,7 @@
         if (actor) {
            promise = listArtefacts(actor);
         }
-    })
+    });
 
     function updateObject() {
         object = JSON.stringify({
