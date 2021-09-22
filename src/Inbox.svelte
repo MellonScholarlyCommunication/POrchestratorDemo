@@ -55,10 +55,10 @@
             return "someone";
         }
 
-        const knownCard = cards.filter( item => iri == item.id );
+        const knownCard = cards.find( item => iri == item.id );
 
-        if (knownCard.length == 1) {
-            return knownCard[0].name
+        if (knownCard) {
+            return knownCard.name
         }
         else {
             return "someone";
@@ -67,6 +67,7 @@
 
     async function shortAbout(obj) {
         const notification = await getNotification(obj['id']);    
+
         const id   = notification['id'];
 
         let actor;

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "crypto-js": "^4.1.1",
+    "cytoscape": "^3.19.1",
     "jsonpath": "^1.1.1",
     "sirv-cli": "^1.0.0",
     "uuid": "^8.3.2"

@@ -103,12 +103,12 @@
 <table>
     <tr>
         <td>
-            <Actor bind:actor name={fromName}/>
+            <Actor bind:actor name={fromName} />
         </td>
     </tr>
     <tr>
         <td>
-            <Origin bind:origin name={fromName}/>
+            <Origin bind:origin name={fromName} />
         </td>
     </tr>
     <tr>
@@ -124,7 +124,7 @@
 <table style="float: left;">
     <tr>
         <td>
-            <Object bind:object />
+            <Object bind:object name={fromName} />
         </td>
     </tr>
 </table>

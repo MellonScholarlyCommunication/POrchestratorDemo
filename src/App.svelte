@@ -2,6 +2,7 @@
 	import PodView from './PodView.svelte';
 	import PodSelector from './PodSelector.svelte';
 	import Refresher from './Refresher.svelte';
+	import Graph from './Graph.svelte';
 
 	export let name;
 	export let pod1;
@@ -38,6 +39,11 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="column graph">
+		<Graph/>
+	</div>
+</div>
 <style>
 	main {
 		text-align: center;
@@ -78,5 +84,9 @@
 	.column {
 		border: 1px solid #ccc;
 		border-radius: 16px;
+	}
+
+	.graph {
+		width: 100%;
 	}
 </style>

@@ -1,4 +1,4 @@
-const myEngine = Comunica.newEngine();
+import { sparqlQuery } from './comunica.js';
 
 export async function getNotification(url) {
     // For now assume the notification is plain JSON
@@ -8,7 +8,7 @@ export async function getNotification(url) {
 }
 
 export async function listInbox(inboxUrl) {
-    const notifications = await queryBinding(inboxUrl,`
+    const notifications = await sparqlQuery(inboxUrl,`
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         PREFIX dcterms: <http://purl.org/dc/terms/>
         SELECT ?notification ?modified WHERE {
@@ -26,15 +26,4 @@ export async function listInbox(inboxUrl) {
             }});
         resolve(notificationList);
     });
-}
-
-// Execute the SPARQL query against the source
-async function queryBinding(source, query) {
-    const result = await myEngine.query(
-                            query, { 
-                            sources: [source]
-                   });
-
-    const bd = result.bindings();
-    return bd;
 }

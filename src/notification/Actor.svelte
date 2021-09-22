@@ -15,11 +15,11 @@
 
     onMount( () =>  {
         cardList.subscribe( li => {
-            li.forEach( entry => {
-                if (entry.name == name) {
-                    actor = entryMap(entry);
-                }
-            })
+            let found = li.find( e => e.name == name);
+
+            if (found) {
+                actor = entryMap(found);
+            }
         })
     });
 

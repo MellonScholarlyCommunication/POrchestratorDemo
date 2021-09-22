@@ -1,4 +1,6 @@
 <script>
+import { lib } from 'crypto-js/core';
+
     import { onMount } from 'svelte';
     import { cardList } from '../registry.js';
 
@@ -20,20 +22,20 @@
     }
     
     onMount( () =>  {
+        // Preselect a target (if given a name)
         cardList.subscribe( card => {
-            card.forEach( entry => {
-                if (entry.name == name) {
-                    selected = entry;
-                    target   = entryMap(entry);
-                }
-            })
+            let found = card.find( e => e.name == name);
+            if (found) {
+               selected = found;
+               target   = entryMap(found);
+            }
         })
     });
 </script>
 
 <b>Target</b><br>
 
-<select bind:value="{selected}" on:change="{updateTarget}">
+<select bind:value={selected} on:change={updateTarget}>
         <option>Choose a target</option>
     {#each $cardList as card}
         <option value={card}>{card.name.toUpperCase()}</option>
