@@ -1,6 +1,5 @@
 import { readable } from 'svelte/store';
 
-const mySource = 'http://localhost:2000';
 const myEngine = Comunica.newEngine();
 
 // Return the value for the binding if it exists otherwise an undefined
@@ -14,19 +13,17 @@ function maybeValue(binding, key) {
 }
 
 // Find all card.ttl information from a registry of inboxes
-async function cardReader(source) {
-    const boxes = await listInboxes(source);
+async function cardReader(registryUrl) {
+    const cardList = await listCards(registryUrl);
 
-    const cards = boxes.map( item => readCard(item) );
+    const cards = cardList.map( item => readCard(item) );
 
     return Promise.all(cards);
 }
 
 // Read a card.ttl and return the information as a (JSON) map
 async function readCard(url) {
-    const wellKnownCard = `${url}/card.ttl`;
-
-    const binding = await queryBinding(wellKnownCard, `
+    const binding = await queryBinding(url, `
         PREFIX as: <http://www.w3.org/ns/activitystreams#> 
         PREFIX ex: <https://www.example.org/>
         SELECT ?id ?type ?name ?inbox ?outbox ?orchestrator
@@ -59,15 +56,15 @@ async function readCard(url) {
 }
 
 // Starting from a base directory find all inboxes at a source
-async function listInboxes(source) {
-    const boxes = await queryBinding(source,`
-        SELECT ?box WHERE {
-            ?ldp <http://www.w3.org/ns/ldp#contains> ?box
+async function listCards(registryUrl) {
+    const cards = await queryBinding(registryUrl,`
+        SELECT ?card WHERE {
+            <${registryUrl}> <http://xmlns.com/foaf/0.1/knows> ?card
         }
     `);
 
     return new Promise( (resolve) => {
-        let ids = boxes.map( item => item.get('?box').value );
+        let ids = cards.map( item => maybeValue(item,'?card') );
         resolve(ids);
     });
 }
@@ -91,7 +88,7 @@ async function fetchJson() {
 
 export const cardList = readable([], function start(set) {
 	fetchJson().then( data => {
-		cardReader(data.baseUrl).then( cards => {
+		cardReader(data.registry).then( cards => {
 			// The cardList is a sorted list of card.ttl found at the source
 			set(cards.sort( (a,b) => a.name.localeCompare(b.name)));
 		});
