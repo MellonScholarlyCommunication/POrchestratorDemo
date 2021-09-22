@@ -661,7 +661,7 @@ var app = (function () {
         return { set, update, subscribe };
     }
 
-    const myEngine = Comunica.newEngine();
+    const myEngine$1 = Comunica.newEngine();
 
     // Return the value for the binding if it exists otherwise an undefined
     function maybeValue(binding, key) {
@@ -684,7 +684,7 @@ var app = (function () {
 
     // Read a card.ttl and return the information as a (JSON) map
     async function readCard(url) {
-        const binding = await queryBinding(url, `
+        const binding = await queryBinding$1(url, `
         PREFIX as: <http://www.w3.org/ns/activitystreams#> 
         PREFIX ex: <https://www.example.org/>
         SELECT ?id ?type ?name ?inbox ?outbox ?orchestrator
@@ -718,7 +718,7 @@ var app = (function () {
 
     // Starting from a base directory find all inboxes at a source
     async function listCards(registryUrl) {
-        const cards = await queryBinding(registryUrl,`
+        const cards = await queryBinding$1(registryUrl,`
         SELECT ?card WHERE {
             <${registryUrl}> <http://xmlns.com/foaf/0.1/knows> ?card
         }
@@ -731,8 +731,8 @@ var app = (function () {
     }
 
     // Execute the SPARQL query against the source
-    async function queryBinding(source, query) {
-        const result = await myEngine.query(
+    async function queryBinding$1(source, query) {
+        const result = await myEngine$1.query(
                                 query, { 
                                 sources: [source]
                        });
@@ -762,6 +762,47 @@ var app = (function () {
     });
 
     const resetCount = writable(0);
+
+    const myEngine = Comunica.newEngine();
+
+    async function getNotification(url) {
+        // For now assume the notification is plain JSON
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    }
+
+    async function listInbox(inboxUrl) {
+        const notifications = await queryBinding(inboxUrl,`
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        SELECT ?notification ?modified WHERE {
+           ?ldp  ldp:contains ?notification .
+           ?notification a ldp:Resource .
+           ?notification dcterms:modified ?modified .
+        }
+    `);
+
+        return new Promise( (resolve) => {
+            let notificationList = 
+                notifications.map( item => { return {
+                    id: item.get('?notification').value ,
+                    modified: item.get('?modified').value
+                }});
+            resolve(notificationList);
+        });
+    }
+
+    // Execute the SPARQL query against the source
+    async function queryBinding(source, query) {
+        const result = await myEngine.query(
+                                query, { 
+                                sources: [source]
+                       });
+
+        const bd = result.bindings();
+        return bd;
+    }
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1873,7 +1914,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (187:0) {:catch error}
+    // (183:0) {:catch error}
     function create_catch_block_1(ctx) {
     	let p;
     	let t_value = /*error*/ ctx[17].message + "";
@@ -1884,7 +1925,7 @@ var app = (function () {
     			p = element("p");
     			t = text(t_value);
     			set_style(p, "color", "red");
-    			add_location(p, file$b, 187, 4, 4495);
+    			add_location(p, file$b, 183, 4, 4432);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1902,17 +1943,17 @@ var app = (function () {
     		block,
     		id: create_catch_block_1.name,
     		type: "catch",
-    		source: "(187:0) {:catch error}",
+    		source: "(183:0) {:catch error}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (149:0) {:then data}
+    // (145:0) {:then data}
     function create_then_block$1(ctx) {
     	let table;
-    	let each_value = /*data*/ ctx[12].contains;
+    	let each_value = /*data*/ ctx[12];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -1928,7 +1969,7 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			add_location(table, file$b, 149, 4, 3448);
+    			add_location(table, file$b, 145, 4, 3358);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, table, anchor);
@@ -1939,7 +1980,7 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (dirty & /*shortAbout, promise, upperCase, shortDate, maxRows*/ 28) {
-    				each_value = /*data*/ ctx[12].contains;
+    				each_value = /*data*/ ctx[12];
     				validate_each_argument(each_value);
     				let i;
 
@@ -1972,18 +2013,18 @@ var app = (function () {
     		block,
     		id: create_then_block$1.name,
     		type: "then",
-    		source: "(149:0) {:then data}",
+    		source: "(145:0) {:then data}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (152:6) {#if i < maxRows}
+    // (148:6) {#if i < maxRows}
     function create_if_block$3(ctx) {
     	let tr;
     	let td;
-    	let t0_value = shortDate(/*obj*/ ctx[13].modified) + "";
+    	let t0_value = shortDate(/*notification*/ ctx[13].modified) + "";
     	let t0;
     	let t1;
     	let promise_1;
@@ -2000,7 +2041,7 @@ var app = (function () {
     		value: 16
     	};
 
-    	handle_promise(promise_1 = /*shortAbout*/ ctx[4](/*obj*/ ctx[13]), info);
+    	handle_promise(promise_1 = /*shortAbout*/ ctx[4](/*notification*/ ctx[13]), info);
 
     	const block = {
     		c: function create() {
@@ -2010,9 +2051,9 @@ var app = (function () {
     			t1 = space();
     			info.block.c();
     			t2 = space();
-    			add_location(td, file$b, 153, 12, 3543);
+    			add_location(td, file$b, 149, 12, 3453);
     			attr_dev(tr, "class", "svelte-s0xzkp");
-    			add_location(tr, file$b, 152, 8, 3526);
+    			add_location(tr, file$b, 148, 8, 3436);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, tr, anchor);
@@ -2026,10 +2067,10 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if (dirty & /*promise*/ 8 && t0_value !== (t0_value = shortDate(/*obj*/ ctx[13].modified) + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*promise*/ 8 && t0_value !== (t0_value = shortDate(/*notification*/ ctx[13].modified) + "")) set_data_dev(t0, t0_value);
     			info.ctx = ctx;
 
-    			if (dirty & /*promise*/ 8 && promise_1 !== (promise_1 = /*shortAbout*/ ctx[4](/*obj*/ ctx[13])) && handle_promise(promise_1, info)) ; else {
+    			if (dirty & /*promise*/ 8 && promise_1 !== (promise_1 = /*shortAbout*/ ctx[4](/*notification*/ ctx[13])) && handle_promise(promise_1, info)) ; else {
     				update_await_block_branch(info, ctx, dirty);
     			}
     		},
@@ -2045,7 +2086,7 @@ var app = (function () {
     		block,
     		id: create_if_block$3.name,
     		type: "if",
-    		source: "(152:6) {#if i < maxRows}",
+    		source: "(148:6) {#if i < maxRows}",
     		ctx
     	});
 
@@ -2067,7 +2108,7 @@ var app = (function () {
     	return block;
     }
 
-    // (157:12) {:then about}
+    // (153:12) {:then about}
     function create_then_block_1(ctx) {
     	let td;
     	let div;
@@ -2132,22 +2173,22 @@ var app = (function () {
     			attr_dev(div, "class", "idbox svelte-s0xzkp");
     			attr_dev(div, "title", div_title_value = /*about*/ ctx[16].id);
     			set_style(div, "background-color", /*about*/ ctx[16].color);
-    			add_location(div, file$b, 158, 16, 3716);
+    			add_location(div, file$b, 154, 16, 3644);
     			attr_dev(span0, "class", "actor svelte-s0xzkp");
-    			add_location(span0, file$b, 164, 16, 3971);
-    			add_location(i0, file$b, 166, 16, 4040);
+    			add_location(span0, file$b, 160, 16, 3908);
+    			add_location(i0, file$b, 162, 16, 3977);
     			attr_dev(span1, "class", "type svelte-s0xzkp");
-    			add_location(span1, file$b, 169, 20, 4092);
-    			add_location(i1, file$b, 171, 20, 4152);
+    			add_location(span1, file$b, 165, 20, 4029);
+    			add_location(i1, file$b, 167, 20, 4089);
     			attr_dev(span2, "class", "object svelte-s0xzkp");
-    			add_location(span2, file$b, 173, 20, 4198);
-    			add_location(i2, file$b, 176, 16, 4276);
+    			add_location(span2, file$b, 169, 20, 4135);
+    			add_location(i2, file$b, 172, 16, 4213);
     			attr_dev(span3, "class", "target svelte-s0xzkp");
-    			add_location(span3, file$b, 178, 16, 4303);
-    			attr_dev(a, "href", a_href_value = /*obj*/ ctx[13].id);
+    			add_location(span3, file$b, 174, 16, 4240);
+    			attr_dev(a, "href", a_href_value = /*notification*/ ctx[13].id);
     			attr_dev(a, "title", a_title_value = /*about*/ ctx[16].id);
-    			add_location(a, file$b, 162, 20, 3899);
-    			add_location(td, file$b, 157, 16, 3695);
+    			add_location(a, file$b, 158, 20, 3827);
+    			add_location(td, file$b, 153, 16, 3623);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, td, anchor);
@@ -2189,7 +2230,7 @@ var app = (function () {
     			if (dirty & /*promise*/ 8 && t11_value !== (t11_value = /*about*/ ctx[16].object + "")) set_data_dev(t11, t11_value);
     			if (dirty & /*promise*/ 8 && t15_value !== (t15_value = upperCase(/*about*/ ctx[16].target) + "")) set_data_dev(t15, t15_value);
 
-    			if (dirty & /*promise*/ 8 && a_href_value !== (a_href_value = /*obj*/ ctx[13].id)) {
+    			if (dirty & /*promise*/ 8 && a_href_value !== (a_href_value = /*notification*/ ctx[13].id)) {
     				attr_dev(a, "href", a_href_value);
     			}
 
@@ -2206,14 +2247,14 @@ var app = (function () {
     		block,
     		id: create_then_block_1.name,
     		type: "then",
-    		source: "(157:12) {:then about}",
+    		source: "(153:12) {:then about}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (155:36)                ...loading notification             {:then about}
+    // (151:45)                ...loading notification             {:then about}
     function create_pending_block_1(ctx) {
     	let t;
 
@@ -2234,14 +2275,14 @@ var app = (function () {
     		block,
     		id: create_pending_block_1.name,
     		type: "pending",
-    		source: "(155:36)                ...loading notification             {:then about}",
+    		source: "(151:45)                ...loading notification             {:then about}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (151:4) {#each data.contains as obj , i }
+    // (147:4) {#each data as notification , i }
     function create_each_block$3(ctx) {
     	let if_block_anchor;
     	let if_block = /*i*/ ctx[15] < /*maxRows*/ ctx[2] && create_if_block$3(ctx);
@@ -2279,14 +2320,14 @@ var app = (function () {
     		block,
     		id: create_each_block$3.name,
     		type: "each",
-    		source: "(151:4) {#each data.contains as obj , i }",
+    		source: "(147:4) {#each data as notification , i }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (147:16)    <p>...loading inbox</p> {:then data}
+    // (143:16)    <p>...loading inbox</p> {:then data}
     function create_pending_block$1(ctx) {
     	let p;
 
@@ -2294,7 +2335,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "...loading inbox";
-    			add_location(p, file$b, 147, 2, 3407);
+    			add_location(p, file$b, 143, 2, 3317);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -2309,7 +2350,7 @@ var app = (function () {
     		block,
     		id: create_pending_block$1.name,
     		type: "pending",
-    		source: "(147:16)    <p>...loading inbox</p> {:then data}",
+    		source: "(143:16)    <p>...loading inbox</p> {:then data}",
     		ctx
     	});
 
@@ -2356,9 +2397,9 @@ var app = (function () {
     			t5 = space();
     			await_block_anchor = empty();
     			info.block.c();
-    			add_location(h3, file$b, 142, 0, 3334);
-    			add_location(i, file$b, 144, 6, 3358);
-    			add_location(div, file$b, 144, 0, 3352);
+    			add_location(h3, file$b, 138, 0, 3244);
+    			add_location(i, file$b, 140, 6, 3268);
+    			add_location(div, file$b, 140, 0, 3262);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2413,12 +2454,6 @@ var app = (function () {
     	return block;
     }
 
-    async function loadResouce(url) {
-    	const response = await fetch(url);
-    	const data = await response.json();
-    	return data;
-    }
-
     function shortId(url) {
     	return url.replaceAll(/.*\//g, "");
     }
@@ -2450,7 +2485,7 @@ var app = (function () {
     	});
 
     	function doRefresh() {
-    		$$invalidate(3, promise = loadResouce(containerUrl));
+    		$$invalidate(3, promise = listInbox(containerUrl));
     	}
 
     	function md5Color(string) {
@@ -2473,7 +2508,7 @@ var app = (function () {
     	}
 
     	async function shortAbout(obj) {
-    		const notification = await loadResouce(obj['id']);
+    		const notification = await getNotification(obj['id']);
     		const id = notification['id'];
     		let actor;
 
@@ -2559,6 +2594,8 @@ var app = (function () {
     		onMount,
     		cardList,
     		resetCount,
+    		listInbox,
+    		getNotification,
     		MD5: md5,
     		title,
     		containerUrl,
@@ -2567,7 +2604,6 @@ var app = (function () {
     		cards,
     		cardUnsubscribe,
     		resetUnsubscribe,
-    		loadResouce,
     		doRefresh,
     		shortId,
     		shortDate,
@@ -2593,7 +2629,7 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty & /*containerUrl*/ 2) {
-    			$$invalidate(3, promise = loadResouce(containerUrl));
+    			$$invalidate(3, promise = listInbox(containerUrl));
     		}
     	};
 

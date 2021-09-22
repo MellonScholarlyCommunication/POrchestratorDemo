@@ -2,6 +2,8 @@
     import { onDestroy, onMount } from 'svelte';
     import { cardList } from './registry.js';
     import { resetCount } from './stores.js'; 
+    import { listInbox , getNotification } from './inbox.js';
+
     import MD5 from "crypto-js/md5";
 
     // Title of the box
@@ -15,7 +17,7 @@
     // Maximum number of rows in the output
     export let maxRows = 5; 
 
-    $: promise = loadResouce(containerUrl);
+    $: promise = listInbox(containerUrl);
 
     let cards;
     
@@ -27,14 +29,8 @@
         doRefresh();
 	});
 
-    async function loadResouce(url) {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data;
-    }
-
     function doRefresh() {
-        promise = loadResouce(containerUrl);
+        promise = listInbox(containerUrl);
     }
 
     function shortId(url) {
@@ -70,7 +66,7 @@
     }
 
     async function shortAbout(obj) {
-        const notification = await loadResouce(obj['id']);    
+        const notification = await getNotification(obj['id']);    
         const id   = notification['id'];
 
         let actor;
@@ -148,11 +144,11 @@
   <p>...loading inbox</p>
 {:then data}
     <table>
-    {#each data.contains as obj , i }
+    {#each data as notification , i }
       {#if i < maxRows}
         <tr>
-            <td>{shortDate(obj.modified)}</td>
-            {#await shortAbout(obj)}
+            <td>{shortDate(notification.modified)}</td>
+            {#await shortAbout(notification)}
               ...loading notification
             {:then about}
                 <td>
@@ -160,7 +156,7 @@
                      title="{about.id}"
                      style="background-color: {about.color}"></div>
                      {about.color}
-                    <a href="{obj.id}" title="{about.id}">
+                    <a href="{notification.id}" title="{about.id}">
                 
                 <span class="actor">{upperCase(about.actor)}</span>
 
