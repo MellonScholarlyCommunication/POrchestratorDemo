@@ -3,7 +3,7 @@ import { getCard } from './card.js';
 import { sparqlQuery ,maybeValue } from './comunica.js';
 
 // Find all card.ttl information from a registry of inboxes
-async function cardReader(registryUrl) {
+export async function cardReader(registryUrl) {
     const cardList = await listCards(registryUrl);
 
     const cards = cardList.map( item => getCard(item) );
@@ -25,7 +25,7 @@ async function listCards(registryUrl) {
     });
 }
 
-async function getRegistry() {
+export async function getRegistry() {
 	const response  = await fetch('registry.json');
 	const data      = await response.json();
 	return data;

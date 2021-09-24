@@ -1,27 +1,45 @@
 <script>
-import { onDestroy } from 'svelte';
+    import { onDestroy } from 'svelte';
  
-    import { listKnownArtefacts } from '../artefact.js';
+    import { listArtefacts , listEvents } from '../artefact.js';
     import { cardList } from '../registry.js';
 
     export let name;
     export let object;
 
-    let promise;
+    let artefactList;
+    let eventList;
     let selected;
 
-    const cardListUnsubscribe = cardList.subscribe( li => {
+    const cardListUnsubscribe = cardList.subscribe( async li => {
         let actor = li.find( e => e.name == name);
         if (actor) {
-           promise = listKnownArtefacts(actor);
+           artefactList = await listArtefacts(actor);
+           artefactList = artefactList.map( art => {
+                return { id: art , type: 'Document' }
+           });
+           eventList    = await listEvents(actor);
+           eventList = eventList.filter( event => {
+                return event.type == 'Offer' &&
+                       event.actor.id != actor.id
+           });
         }
     });
 
     function updateObject() {
-        object = JSON.stringify({
-            id: selected ,
-            type: "Document"          
-        });
+        if (selected.type == 'Document') {
+            object = JSON.stringify({
+                id: selected.id ,
+                type: selected.type         
+            });
+        } 
+        else {
+            object = JSON.stringify({
+                id: selected.id ,
+                type: selected.type,     
+                object: selected.object
+            });
+        }
     }
 
     onDestroy( () => {
@@ -32,12 +50,19 @@ import { onDestroy } from 'svelte';
 <b>Object</b><br>
 
 <select bind:value={selected} on:change={updateObject}>
-    <option>Choose an artefact</option>
+    <option>Choose an object</option>
 
-    {#await promise}
-    {:then artefactList}
+    {#if artefactList}
+        <option>-Artefact-</option>
         {#each artefactList as artefact}
-            <option value={artefact}>{artefact}</option>
+            <option value={artefact}>{artefact.id}</option>
         {/each}
-    {/await}
+    {/if}
+
+    {#if eventList && eventList.length }
+        <option>-Offer-</option>
+        {#each eventList as event}
+            <option value={event}>Offer {event.object.id}</option>
+        {/each}
+    {/if}
 </select>

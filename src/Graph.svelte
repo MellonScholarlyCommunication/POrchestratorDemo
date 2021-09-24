@@ -1,6 +1,13 @@
 <script>
-    import { onDestroy, onMount } from 'svelte';
+    import Modal from './Modal.svelte';
+    import { onMount } from 'svelte';
+    import { listAllKnownArtefacts } from './artefact.js';
     import cytoscape from 'cytoscape';
+
+    // Autorefresh after X seconds
+    export let refreshInterval = 30;
+
+    let showModal = false;
 
     const cyStyle = [ 
                 {
@@ -29,20 +36,20 @@
 
     let cy;
 
-    function updateGraph() {
-        cy = cytoscape({
+    async function updateGraph() {
+        const artefactList = await listAllKnownArtefacts();
+
+        const nodeList = artefactList.map( art => {
+            // Node:
+            //     data: { id: 'b' , label : 'dol' }
+            // Edge:
+            //     data: { id: 'ab', source: 'a', target: 'b' }
+            return { data: {id: art , label: art }};
+        });
+
+        return cy = cytoscape({
                 container: document.getElementById('cy') ,
-                elements: [
-                { // node a
-                    data: { id: 'a' , label: 'brol' }
-                },
-                { // node b
-                    data: { id: 'b' , label : 'dol' }
-                },
-                // { // edge ab
-                //     data: { id: 'ab', source: 'a', target: 'b' }
-                // }
-                ],
+                elements: nodeList,
                 style: cyStyle ,
                 layout: cyLayout
             });
@@ -51,12 +58,29 @@
 
     onMount( 
         () => {
-            updateGraph();
+            if (refreshInterval > 0) {
+                const interval = setInterval( 
+                    () => { cy = updateGraph(); } ,  refreshInterval * 1000
+                );
+
+                return () => { clearInterval(interval) }
+            }     
+            cy = updateGraph();
         }
     );
 </script>
 
-<div id="cy"></div>
+<button on:click="{() => {showModal = true; cy = updateGraph() } }">
+	Show network
+</button>
+
+{#if showModal}
+	<Modal on:close="{() => showModal = false}">
+    <div id="cy"></div>
+    </Modal>
+{:else}
+    <div id="cy" style="display: none"></div>
+{/if}
 
 <style>
     #cy {

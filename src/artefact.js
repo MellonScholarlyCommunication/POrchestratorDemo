@@ -1,5 +1,5 @@
 import { getCard } from './card.js';
-import { cardList } from './registry.js';
+import { getRegistry, cardReader } from './registry.js';
 import { listOutbox, getEvent } from './outbox.js';
 import { sparqlQuery, maybeValue } from "./comunica.js";
 
@@ -26,15 +26,7 @@ export async function listArtefacts(card) {
 export async function listKnownArtefacts(card) {
     const artefactList = await listArtefacts(card);
 
-    const outboxList = await listOutbox(card.outbox);
-
-    outboxList ||= [];
-
-    const eventList = await Promise.all(
-        outboxList.map( async item => await getEvent(item.id) )
-    );
-
-    eventList ||= [];
+    const eventList = await listEvents(card);
 
     const objectList = eventList.map( event => event.object.id );
 
@@ -43,7 +35,50 @@ export async function listKnownArtefacts(card) {
     return uniqIds;
 }
 
+// Return all known events from the ex:outbox
+export async function listEvents(card) {
+    if (! card.outbox ) {
+        return [];
+    }
+
+    const outboxList = await listOutbox(card.outbox);
+
+    if (! outboxList ) {
+        return [];
+    }
+
+    const eventList = await Promise.all(
+        outboxList.map( async item => await getEvent(item.id) )
+    );
+
+    return eventList;
+}
+
 // Return all known artefacts from all event logs in the registry
-export async function listAllKnownArtefacts(cardList) {
-    // TODO
+export async function listAllKnownArtefacts() {
+    const config   = await getRegistry();
+    const cardList = await cardReader(config.registry);
+
+    const outboxList = await Promise.all( 
+        cardList.filter( card =>  card.outbox )
+                .map( async card => {
+                    return await listOutbox(card.outbox);  
+                })
+    );
+
+    const eventList = await Promise.all(
+        outboxList.flat().map( async item => {
+            return await getEvent(item.id)  
+        })
+    );
+
+    const eventTypeFilter = /Offer|Announce/;
+    const nodeList = eventList.filter( event => 
+                                        event.object && 
+                                        event.type.match(eventTypeFilter))
+                              .map( event => event.object.id );
+
+    const uniqNodeList = [...new Set(nodeList)];
+
+    return uniqNodeList;
 }
