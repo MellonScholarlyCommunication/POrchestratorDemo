@@ -5,7 +5,6 @@
     export let name;
     export let context;
     export let inReplyTo;
-    export let object;
 
     let eventList;
     let selected;
