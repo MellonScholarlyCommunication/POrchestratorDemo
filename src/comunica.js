@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 const myEngine = Comunica.newEngine();
 
+=======
+>>>>>>> pr/cytoscape
 // Return the value for the binding if it exists otherwise an undefined
 export function maybeValue(binding, key) {
     if (binding.has(key)) {
@@ -12,6 +15,14 @@ export function maybeValue(binding, key) {
 
 // Execute the SPARQL query against the source
 export async function sparqlQuery(source, query) {
+<<<<<<< HEAD
+=======
+    const myEngine = Comunica.newEngine();
+
+    // We need fresh data for every LDN inbox listing
+    myEngine.invalidateHttpCache();
+
+>>>>>>> pr/cytoscape
     const result = await myEngine.query(
                             query, { 
                             sources: [source]

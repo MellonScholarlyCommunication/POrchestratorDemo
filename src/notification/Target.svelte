@@ -1,11 +1,19 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { cardList } from '../registry.js';
 
     export let name;
     export let target;
 
     let selected;
+
+    const cardListUnsubscribe = cardList.subscribe( card => {
+        let found = card.find( e => e.name == name);
+        if (found) {
+            selected = found;
+            target   = entryMap(found);
+        }
+    });
 
     function updateTarget() {
         target = entryMap(selected);
@@ -18,22 +26,15 @@
             inbox: item.inbox
         });
     }
-    
-    onMount( () =>  {
-        cardList.subscribe( card => {
-            card.forEach( entry => {
-                if (entry.name == name) {
-                    selected = entry;
-                    target   = entryMap(entry);
-                }
-            })
-        })
+   
+    onDestroy( () => {
+        cardListUnsubscribe();
     });
 </script>
 
 <b>Target</b><br>
 
-<select bind:value="{selected}" on:change="{updateTarget}">
+<select bind:value={selected} on:change={updateTarget}>
         <option>Choose a target</option>
     {#each $cardList as card}
         <option value={card}>{card.name.toUpperCase()}</option>

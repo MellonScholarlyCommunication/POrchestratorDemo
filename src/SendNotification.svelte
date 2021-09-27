@@ -3,6 +3,7 @@
     import Origin from './notification/Origin.svelte';
     import Target from './notification/Target.svelte';
     import Actor from './notification/Actor.svelte';
+    import Context from './notification/Context.svelte';
     import Object from './notification/Object.svelte';
     import Type from './notification/Type.svelte';
 
@@ -14,6 +15,8 @@
     let actor;
     let target;
     let object;
+    let context;
+    let inReplyTo;
 
     let promise;
 
@@ -55,6 +58,14 @@
             object: jObject
         };
 
+        if (inReplyTo) {
+            notification.inReplyTo = inReplyTo;
+        }
+
+        if (context) {
+            notification.context = context;
+        }
+
         // Send the notification to the inbox of the sender ...
         // The orchestrator will forward it to the target
         let response = await fetch(notification.origin.inbox, {
@@ -91,7 +102,17 @@
 <table>
     <tr>
         <td>
-            <Type bind:as2Type/>
+            <Actor bind:actor name={fromName} />
+        </td>
+        <td>
+            <Target bind:target name={toName} />
+        </td>
+        <td>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <Origin bind:origin name={fromName} />
         </td>
     </tr>
 </table>
@@ -103,28 +124,17 @@
 <table>
     <tr>
         <td>
-            <Actor bind:actor name={fromName}/>
+            <Type bind:as2Type/>
         </td>
     </tr>
     <tr>
         <td>
-            <Origin bind:origin name={fromName}/>
+            <Context bind:object bind:context bind:inReplyTo name={fromName} />
         </td>
     </tr>
     <tr>
         <td>
-            <Target bind:target name={toName} />
-        </td>
-    </tr>
-</table>
-
-    </div>
-    <div class="column">
-
-<table style="float: left;">
-    <tr>
-        <td>
-            <Object bind:object />
+            <Object bind:object name={fromName} />
         </td>
     </tr>
 </table>
