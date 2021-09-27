@@ -51,8 +51,8 @@
     </div>
     <div>
      <select bind:value={selected} on:change={updateReplyContext}>
+         <option>Choose a reply</option>
      {#if eventList && eventList.length }
-        <option>Choose a reply</option>
         {#each eventList as event}
             <option value={event}>Offer {event.object.id}</option>
         {/each}

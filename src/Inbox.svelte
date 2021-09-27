@@ -3,7 +3,7 @@
     import { cardList } from './registry.js';
     import { resetCount } from './stores.js'; 
     import { listInbox , getNotification } from './inbox.js';
-
+    import { listMaybeArray } from './util.js';
     import MD5 from "crypto-js/md5";
 
     // Title of the box
@@ -100,8 +100,8 @@
             type = "whatever";
         }
 
-        object = [].concat(upperCase(object));
-        type = [].concat(upperCase(type));
+        object = [].concat(listMaybeArray(object,upperCase));
+        type = [].concat(listMaybeArray(type,upperCase));
 
         const actorName = nameLookup(actor);
         const targetName = nameLookup(target);
