@@ -26,11 +26,11 @@
     });
 
     function entryMap(item) {
-        return JSON.stringify({
+        return {
             id: item.id ,
             type: item.type ,
             inbox: item.inbox
-        });
+        };
     }
 
     onDestroy( () => {

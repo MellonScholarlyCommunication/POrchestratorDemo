@@ -28,17 +28,17 @@
 
     function updateObject() {
         if (isMaybeArray(selected.type, e => e === 'Document')) {
-            object = JSON.stringify({
+            object = {
                 id: selected.id ,
                 type: selected.type         
-            });
+            };
         } 
         else {
-            object = JSON.stringify({
+            object = {
                 id: selected.id ,
                 type: selected.type,     
                 object: selected.object
-            });
+            };
         }
     }
 

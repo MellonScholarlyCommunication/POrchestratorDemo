@@ -40,22 +40,17 @@
             throw new Error("need an actor");
         }
 
-        let jOrigin = JSON.parse(origin);
-        let jTarget = JSON.parse(target);
-        let jObject = JSON.parse(object);
-        let jActor  = JSON.parse(actor);
-
         let notification = {
             '@context': [
                 "https://www.w3.org/ns/activitystreams",
                 "http://purl.org/coar/notify"
             ],
             id: `urn:uuid:${uuid}`,
-            type: as2Type ,
-            actor: jActor,
-            origin: jOrigin ,
-            target: jTarget ,
-            object: jObject
+            type:   as2Type ,
+            actor:  actor,
+            origin: origin ,
+            target: target ,
+            object: object
         };
 
         if (inReplyTo) {
