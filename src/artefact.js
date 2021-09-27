@@ -2,7 +2,7 @@ import { getCard } from './card.js';
 import { getRegistry, cardReader } from './registry.js';
 import { listOutbox, getEvent } from './outbox.js';
 import { sparqlQuery, maybeValue } from "./comunica.js";
-import { isMaybeArray } from './util.js';
+import { hasAny } from './util.js';
 
 // Return all artefact IRI-s from the ex:artefact location in the card
 export async function listArtefacts(card) {
@@ -66,7 +66,7 @@ export async function listAllKnownArtefacts(eventList) {
     const nodeList = eventList
                       .filter( event => 
                             event.object && 
-                            isMaybeArray(event.type,
+                            hasAny(event.type,
                                 e => e.match(eventTypeFilter)
                             )
                       )

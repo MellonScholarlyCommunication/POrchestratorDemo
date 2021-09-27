@@ -2,7 +2,7 @@
     import { onDestroy } from 'svelte';
     import { listArtefacts , listEvents } from '../artefact.js';
     import { cardList } from '../registry.js';
-    import { isMaybeArray } from '../util.js'; 
+    import { hasAny } from '../util.js'; 
 
     export let name;
     export let object;
@@ -20,7 +20,7 @@
            });
            eventList    = await listEvents(actor);
            eventList = eventList.filter( event => {
-                return isMaybeArray(event.type, e => e === 'Offer') &&
+                return hasAny(event.type, e => e === 'Offer') &&
                        event.actor.id != actor.id;
            });
         }

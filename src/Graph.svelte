@@ -2,7 +2,7 @@
     import Modal from './Modal.svelte';
     import { onMount } from 'svelte';
     import { listAllKnownArtefacts, listAllKnownEvents } from './artefact.js';
-    import { isMaybeArray } from './util.js';
+    import { hasAny } from './util.js';
 
     import cytoscape from 'cytoscape';
 
@@ -47,8 +47,7 @@
                 eventList
                     .filter( event => 
                             event.context &&
-                            isMaybeArray(event.type,
-                                e => e === 'Announce')
+                            hasAny(event.type, e => e === 'Announce')
                     )
                     .map( event => {
                         const source = event.object.id;

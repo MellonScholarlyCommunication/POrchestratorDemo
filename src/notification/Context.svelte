@@ -1,7 +1,7 @@
 <script>
     import { listArtefacts , listEvents } from '../artefact.js';
     import { cardList } from '../registry.js';
-    import { isMaybeArray } from '../util.js';
+    import { hasAny } from '../util.js';
 
     export let name;
     export let context;
@@ -15,9 +15,9 @@
         if (actor) {
             eventList = await listEvents(actor);
             eventList = eventList.filter( event => {
-                return isMaybeArray(event.type,e => e === 'Offer') 
-                        &&
-                        event.actor.id != actor.id
+                return hasAny(event.type,e => e === 'Offer') 
+                       &&
+                       event.actor.id != actor.id
             });
         }
     });
