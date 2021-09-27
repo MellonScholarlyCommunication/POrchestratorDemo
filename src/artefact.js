@@ -55,7 +55,25 @@ export async function listEvents(card) {
 }
 
 // Return all known artefacts from all event logs in the registry
-export async function listAllKnownArtefacts() {
+export async function listAllKnownArtefacts(eventList) {
+    if (eventList === undefined) { 
+        eventList = await listAllKnownEvents();
+    }
+
+    // Artefacts are typically in Offer or Announce notifications...
+    const eventTypeFilter = /Offer|Announce/;
+    const nodeList = eventList
+                      .filter( event => 
+                            event.object && 
+                            event.type.match(eventTypeFilter))
+                      .map( event => event.object.id );
+
+    const uniqNodeList = [...new Set(nodeList)];
+
+    return uniqNodeList;
+}
+
+export async function listAllKnownEvents() {
     const config   = await getRegistry();
     const cardList = await cardReader(config.registry);
 
@@ -74,14 +92,5 @@ export async function listAllKnownArtefacts() {
         })
     );
 
-    // Artefacts are typically in Offer or Announce notifications...
-    const eventTypeFilter = /Offer|Announce/;
-    const nodeList = eventList.filter( event => 
-                                        event.object && 
-                                        event.type.match(eventTypeFilter))
-                              .map( event => event.object.id );
-
-    const uniqNodeList = [...new Set(nodeList)];
-
-    return uniqNodeList;
+    return eventList;
 }

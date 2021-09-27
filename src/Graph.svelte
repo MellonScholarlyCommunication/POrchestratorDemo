@@ -1,7 +1,7 @@
 <script>
     import Modal from './Modal.svelte';
     import { onMount } from 'svelte';
-    import { listAllKnownArtefacts } from './artefact.js';
+    import { listAllKnownArtefacts, listAllKnownEvents } from './artefact.js';
     import cytoscape from 'cytoscape';
 
     // Autorefresh after X seconds
@@ -37,19 +37,33 @@
     let cy;
 
     async function updateGraph() {
-        const artefactList = await listAllKnownArtefacts();
+
+        const eventList    = await listAllKnownEvents();
+        const artefactList = await listAllKnownArtefacts(eventList);
+
+        const edgeList = 
+                eventList
+                    .filter( event => 
+                            event.type === 'Announce' && event.context )
+                    .map( event => {
+                        const source = event.object.id;
+                        const target = event.context;
+                        
+                        return { data: {
+                            id: `E-${source}`,
+                            source: source,
+                            target: target
+                        } }
+                    });
 
         const nodeList = artefactList.map( art => {
-            // Node:
-            //     data: { id: 'b' , label : 'dol' }
-            // Edge:
-            //     data: { id: 'ab', source: 'a', target: 'b' }
-            return { data: {id: art , label: art }};
+            const label = art.replaceAll(/.*\//g,'');
+            return { data: {id: art , label: label }};
         });
 
         return cy = cytoscape({
                 container: document.getElementById('cy') ,
-                elements: nodeList,
+                elements: nodeList.concat(edgeList),
                 style: cyStyle ,
                 layout: cyLayout
             });
