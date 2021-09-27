@@ -2,6 +2,8 @@
     import Modal from './Modal.svelte';
     import { onMount } from 'svelte';
     import { listAllKnownArtefacts, listAllKnownEvents } from './artefact.js';
+    import { isMaybeArray } from './util.js';
+
     import cytoscape from 'cytoscape';
 
     // Autorefresh after X seconds
@@ -44,7 +46,10 @@
         const edgeList = 
                 eventList
                     .filter( event => 
-                            event.type === 'Announce' && event.context )
+                            event.context &&
+                            isMaybeArray(event.type,
+                                e => e === 'Announce')
+                    )
                     .map( event => {
                         const source = event.object.id;
                         const target = event.context;

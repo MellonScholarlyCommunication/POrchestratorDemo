@@ -1,8 +1,8 @@
 <script>
     import { onDestroy } from 'svelte';
- 
     import { listArtefacts , listEvents } from '../artefact.js';
     import { cardList } from '../registry.js';
+    import { isMaybeArray } from '../util.js'; 
 
     export let name;
     export let object;
@@ -20,14 +20,14 @@
            });
            eventList    = await listEvents(actor);
            eventList = eventList.filter( event => {
-                return event.type == 'Offer' &&
-                       event.actor.id != actor.id
+                return isMaybeArray(event.type, e => e === 'Offer') &&
+                       event.actor.id != actor.id;
            });
         }
     });
 
     function updateObject() {
-        if (selected.type == 'Document') {
+        if (isMaybeArray(selected.type, e => e === 'Document')) {
             object = JSON.stringify({
                 id: selected.id ,
                 type: selected.type         
