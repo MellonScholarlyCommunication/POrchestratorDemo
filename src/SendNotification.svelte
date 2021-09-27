@@ -102,7 +102,17 @@
 <table>
     <tr>
         <td>
-            <Type bind:as2Type/>
+            <Actor bind:actor name={fromName} />
+        </td>
+        <td>
+            <Target bind:target name={toName} />
+        </td>
+        <td>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <Origin bind:origin name={fromName} />
         </td>
     </tr>
 </table>
@@ -114,22 +124,16 @@
 <table>
     <tr>
         <td>
-            <Actor bind:actor name={fromName} />
+            <Type bind:as2Type/>
         </td>
     </tr>
     <tr>
         <td>
-            <Origin bind:origin name={fromName} />
+            <Context bind:object bind:context bind:inReplyTo name={fromName} />
         </td>
     </tr>
     <tr>
         <td>
-            <Target bind:target name={toName} />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <Context bind:object bind:context bind:inReplyTo />
             <Object bind:object name={fromName} />
         </td>
     </tr>

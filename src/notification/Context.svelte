@@ -1,29 +1,31 @@
 <script>
+    import { listArtefacts , listEvents } from '../artefact.js';
+    import { cardList } from '../registry.js';
+
+    export let name;
     export let context;
     export let inReplyTo;
     export let object;
 
-    $: {
-        if (object) {
-            let jObject = JSON.parse(object);
+    let eventList;
+    let selected;
 
-            if (! jObject.type) {
+    const cardListUnsubscribe = cardList.subscribe( async li => {
+        let actor = li.find( e => e.name == name);
+        if (actor) {
+            eventList = await listEvents(actor);
+            eventList = eventList.filter( event => {
+                return event.type == 'Offer' &&
+                       event.actor.id != actor.id
+            });
+        }
+    });
 
-            }
-            else if (jObject.type == 'Document') {
-                context = undefined;
-                inReplyTo = undefined;
-            }
-            else if (jObject.type == 'Offer') {
-                context = jObject.object.id;
-                inReplyTo = jObject.id;
-            }
-        }
-        else {
-            context = undefined;
-            inReplyTo = undefined;
-        }
+    function updateReplyContext() {
+        inReplyTo = selected.id ;
+        context   = selected.object.id;
     }
+
 </script>
 
 {#if context || inReplyTo}
@@ -47,8 +49,13 @@
         <b>ReplyTo</b>
     </div>
     <div>
-    <select>
-        <option>Choose a notification</option>
-    </select>
+     <select bind:value={selected} on:change={updateReplyContext}>
+     {#if eventList && eventList.length }
+        <option>Choose a reply</option>
+        {#each eventList as event}
+            <option value={event}>Offer {event.object.id}</option>
+        {/each}
+     {/if}
+     </select>
     </div>
 {/if}

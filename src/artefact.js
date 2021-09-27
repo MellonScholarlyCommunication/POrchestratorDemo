@@ -59,6 +59,7 @@ export async function listAllKnownArtefacts() {
     const config   = await getRegistry();
     const cardList = await cardReader(config.registry);
 
+    // Find all eventLogs (outboxes)...
     const outboxList = await Promise.all( 
         cardList.filter( card =>  card.outbox )
                 .map( async card => {
@@ -66,12 +67,14 @@ export async function listAllKnownArtefacts() {
                 })
     );
 
+    // Find all events in all eventLogs...
     const eventList = await Promise.all(
         outboxList.flat().map( async item => {
             return await getEvent(item.id)  
         })
     );
 
+    // Artefacts are typically in Offer or Announce notifications...
     const eventTypeFilter = /Offer|Announce/;
     const nodeList = eventList.filter( event => 
                                         event.object && 

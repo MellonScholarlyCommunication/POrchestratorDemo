@@ -12,6 +12,7 @@ export function maybeValue(binding, key) {
 export async function sparqlQuery(source, query) {
     const myEngine = Comunica.newEngine();
 
+    // We need fresh data for every LDN inbox listing
     myEngine.invalidateHttpCache();
 
     const result = await myEngine.query(
