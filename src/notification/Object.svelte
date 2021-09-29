@@ -27,7 +27,7 @@
     });
 
     function updateObject() {
-        if (isMaybeArray(selected.type, e => e === 'Document')) {
+        if (hasAny(selected.type, e => e === 'Document')) {
             object = {
                 id: selected.id ,
                 type: selected.type         
