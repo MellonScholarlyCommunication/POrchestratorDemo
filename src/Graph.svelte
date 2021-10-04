@@ -51,7 +51,10 @@
                     )
                     .map( event => {
                         const source = event.object.id;
-                        const target = event.context;
+                        const target = event.context === 'string' ||
+                                       event.context instanceof String ?
+                                            event.context :
+                                            event.context.id ;
                         
                         return { data: {
                             id: `E-${source}`,
