@@ -15,7 +15,7 @@ export async function listInbox(inboxUrl) {
            ?ldp  ldp:contains ?notification .
            ?notification a ldp:Resource .
            ?notification dcterms:modified ?modified .
-        }
+        } ORDER BY DESC(?modified)
     `);
 
     return new Promise( (resolve) => {
