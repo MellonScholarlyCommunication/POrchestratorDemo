@@ -40,6 +40,10 @@
 
     async function updateGraph() {
 
+        if (!showModal) {
+            return;
+        }
+
         const eventList    = await listAllKnownEvents();
         const artefactList = await listAllKnownArtefacts(eventList);
 
@@ -51,11 +55,11 @@
                     )
                     .map( event => {
                         const source = event.object.id;
-                        const target = event.context === 'string' ||
-                                       event.context instanceof String ?
+                        const target = typeof event.context === 'string' ?
                                             event.context :
                                             event.context.id ;
-                        
+                        console.log(`edge(${source}->${target})`);
+
                         return { data: {
                             id: `E-${source}`,
                             source: source,
@@ -65,7 +69,8 @@
 
         const nodeList = artefactList.map( art => {
             const label = art.replaceAll(/.*\//g,'');
-            return { data: {id: art , label: label }};
+            console.log(`node(${art})`);
+            return { data: {id: art , label: art }};
         });
 
         return cy = cytoscape({
@@ -73,7 +78,7 @@
                 elements: nodeList.concat(edgeList),
                 style: cyStyle ,
                 layout: cyLayout
-            });
+        });
 
     }
 
