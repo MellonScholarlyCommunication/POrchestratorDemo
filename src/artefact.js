@@ -13,7 +13,7 @@ export async function listArtefacts(card) {
              ?ldp  ldp:contains ?artefact .
              ?artefact a ldp:Resource .
              ?artefact dcterms:modified ?modified .
-          }
+          } ORDER BY DESC(?modified)
     `);
 
     return new Promise( (resolve) => {
