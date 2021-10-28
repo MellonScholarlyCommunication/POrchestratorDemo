@@ -3,7 +3,7 @@
     import { cardList } from './registry.js';
     import { resetCount } from './stores.js'; 
     import { listInbox , getNotification } from './inbox.js';
-    import { mapAll } from './util.js';
+    import * as util from './util.js';
     import MD5 from "crypto-js/md5";
 
     // Title of the box
@@ -31,23 +31,6 @@
 
     function doRefresh() {
         promise = listInbox(containerUrl);
-    }
-
-    function shortId(url) {
-        return url.replaceAll(/.*\//g,"");
-    } 
-
-    function shortDate(date) {
-        return date.replaceAll(/\..+/g,"");
-    }
-
-    function upperCase(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    function md5Color(string) {
-        let md5String = MD5(string).toString();
-        return `#${md5String.substring(0, 6)}`;
     }
 
     function nameLookup(iri) {
@@ -100,8 +83,8 @@
             type = "whatever";
         }
 
-        object = [].concat(mapAll(object,upperCase));
-        type = [].concat(mapAll(type,upperCase));
+        object = [].concat(util.mapAll(object,util.upperCase));
+        type = [].concat(util.mapAll(type,util.upperCase));
 
         const actorName = nameLookup(actor);
         const targetName = nameLookup(target);
@@ -111,7 +94,7 @@
         
         return {
             "id"     : id,
-            "color"  : md5Color(id),
+            "color"  : util.md5Color(id),
             "object" : objectName ,
             "type"   : typeName ,
             "actor"  : actorName ,
@@ -148,7 +131,7 @@
     {#each data as notification , i }
       {#if i < maxRows}
         <tr>
-            <td>{shortDate(notification.modified)}</td>
+            <td>{util.shortDate(notification.modified)}</td>
             {#await shortAbout(notification)}
               ...loading notification
             {:then about}
@@ -159,7 +142,7 @@
                      {about.color}
                     <a href="{notification.id}" title="{about.id}">
                 
-                <span class="actor">{upperCase(about.actor)}</span>
+                <span class="actor">{util.upperCase(about.actor)}</span>
 
                 <i>sends</i>
 
@@ -173,7 +156,7 @@
 
                 <i>to</i>
 
-                <span class="target">{upperCase(about.target)}</span>
+                <span class="target">{util.upperCase(about.target)}</span>
                     </a>
                 </td>
             {/await}
