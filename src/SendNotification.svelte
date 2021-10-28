@@ -6,11 +6,13 @@
     import Context from './notification/Context.svelte';
     import Object from './notification/Object.svelte';
     import Type from './notification/Type.svelte';
+    import SubType from './notification/SubType.svelte';
 
     export let fromName;
     export let toName;
 
     let as2Type;
+    let as2SubType;
     let origin;
     let actor;
     let target;
@@ -43,7 +45,8 @@
         let notification = {
             '@context': [
                 "https://www.w3.org/ns/activitystreams",
-                "http://purl.org/coar/notify"
+                "http://purl.org/coar/notify" ,
+                { "ex" : "https://www.example.org/" }
             ],
             id: `urn:uuid:${uuid}`,
             type:   as2Type ,
@@ -52,6 +55,10 @@
             target: target ,
             object: object
         };
+
+        if (as2SubType && as2SubType.length) {
+            notification.type = [ as2Type , `ex:${as2SubType}` ];
+        }
 
         if (inReplyTo) {
             notification.inReplyTo = inReplyTo;
@@ -121,14 +128,17 @@
         <td>
             <Type bind:as2Type/>
         </td>
+        <td>
+            <SubType bind:as2SubType/>
+        </td>
     </tr>
     <tr>
-        <td>
+        <td colspan="2">
             <Context bind:object bind:context bind:inReplyTo name={fromName} />
         </td>
     </tr>
     <tr>
-        <td>
+        <td colspan="2">
             <Object bind:object name={fromName} />
         </td>
     </tr>
