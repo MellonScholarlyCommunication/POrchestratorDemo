@@ -3,7 +3,7 @@ import { sparqlQuery ,maybeValue } from './comunica.js';
 // Read a card.ttl and return the information as a (JSON) map
 export async function getCard(webid) {
     const binding = await sparqlQuery(webid, `
-        PREFIX as: <http://www.w3.org/ns/activitystreams#> 
+        PREFIX as: <https://www.w3.org/ns/activitystreams#> 
         PREFIX ex: <https://www.example.org/>
         SELECT ?id ?type ?name ?inbox ?outbox ?orchestrator ?artefacts
         WHERE {
