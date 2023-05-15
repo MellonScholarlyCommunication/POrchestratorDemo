@@ -1,0 +1,8 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix schema: <http://schema.org/>.
+
+<#me> foaf:knows 
+    <https://hochstenbach.inrupt.net/archivator/profile/service.ttl#me>, 
+    <https://hochstenbach.inrupt.net/archivator/profile/orchestrator.ttl#me>, 
+    <https://hochstenbach.solidcommunity.net/registrator/profile/service.ttl#me>, 
+    <https://hochstenbach.solidcommunity.net/registrator/profile/orchestrator.ttl#m>. 
