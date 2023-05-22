@@ -5,4 +5,4 @@
     <https://hochstenbach.inrupt.net/archivator/profile/service.ttl#me>, 
     <https://hochstenbach.inrupt.net/archivator/profile/orchestrator.ttl#me>, 
     <https://hochstenbach.solidcommunity.net/registrator/profile/service.ttl#me>, 
-    <https://hochstenbach.solidcommunity.net/registrator/profile/orchestrator.ttl#m>. 
+    <https://hochstenbach.solidcommunity.net/registrator/profile/orchestrator.ttl#me>. 

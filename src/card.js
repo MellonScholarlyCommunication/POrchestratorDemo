@@ -4,12 +4,13 @@ import { sparqlQuery ,maybeValue } from './comunica.js';
 export async function getCard(webid) {
     const binding = await sparqlQuery(webid, `
         PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         PREFIX ex: <https://www.example.org/>
         SELECT ?id ?type ?name ?inbox ?outbox ?orchestrator ?artefacts
         WHERE {
             { ?id a ?type .
-              ?id as:name ?name .
+              ?id foaf:name ?name .
               ?id ldp:inbox ?inbox .
             } 
             OPTIONAL { ?id ex:artefacts ?artefacts . } .
